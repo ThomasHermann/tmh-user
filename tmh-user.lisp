@@ -1,6 +1,6 @@
 #|
 
-TMH-USER
+ TMH-USER
 
  Copyright (c) 2009, Thomas M. Hermann
  All rights reserved.
@@ -61,6 +61,10 @@ bound."
           "~S is not bound to a symbol." name)
   (makunbound name))
 
+(defun fas (name)
+  "Abbreviation for FIND-ALL-SYMBOLS."
+  (find-all-symbols (string name)))
+
 (defun magic-8-ball (query)
   "Seek the advice of the Magic 8-ball."
   (declare (ignore query))
@@ -80,7 +84,7 @@ bound."
     with vec = (map-into (make-array 20)
                          (lambda () (incf counter)))
     for index below 20
-    for swap = (random 20) then (random 20) do
+    and swap = (random 20) do
     (rotatef (svref vec index) (svref vec swap))
     finally (return (svref vec (random 20))))))
 
