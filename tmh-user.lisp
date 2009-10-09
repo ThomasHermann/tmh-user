@@ -51,7 +51,9 @@ error if not bound."
   (assert (fboundp name)
           (name)
           "~S is not bound to a function or macro." name)
-  (fmakunbound name))
+  (fmakunbound name)
+  (unless (boundp name)
+    (unintern name)))
 
 (defun sunbind (name)
   "Remove the symbol definition, providing a continuable error if not
@@ -59,7 +61,9 @@ bound."
   (assert (boundp name)
           (name)
           "~S is not bound to a symbol." name)
-  (makunbound name))
+  (makunbound name)
+  (unless (fboundp name)
+    (unintern name)))
 
 (defun fas (name)
   "Abbreviation for FIND-ALL-SYMBOLS."
