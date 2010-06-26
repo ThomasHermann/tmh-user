@@ -2,7 +2,7 @@
 
  TMH-USER
 
- Copyright (c) 2009, Thomas M. Hermann
+ Copyright (c) 2009,2010, Thomas M. Hermann
  All rights reserved.
 
  Redistribution and  use  in  source  and  binary  forms, with or without
@@ -35,15 +35,15 @@
 
 ;;; Some utilities to mold the REPL to my liking.
 
-(common-lisp:defpackage #:tmh-user
-  (:use #:common-lisp #:common-lisp-user
-        #+sbcl #:sb-ext
-        #+ccl  #:ccl)
-  (:export #:funbind
-           #:sunbind
-           #:magic-8-ball))
+(defpackage "TMH-USER"
+  (:use "COMMON-LISP" "COMMON-LISP-USER"
+        #+sbcl "SB-EXT"
+        #+ccl  "CCL"
+        #+lispworks "LISPWORKS"
+        #+lispworks "HCL")
+  (:export "FUNBIND" "SUNBIND" "MAGIC-8-BALL"))
 
-(common-lisp:in-package #:tmh-user)
+(in-package "TMH-USER")
 
 (defun funbind (name)
   "Remove the function or macro definition, providing a continuable
@@ -72,23 +72,29 @@ bound."
 (defun magic-8-ball (query)
   "Seek the advice of the Magic 8-ball."
   (declare (ignore query))
-  (svref
-   #("As I see it, yes" "It is certain"
-     "It is decidedly so" "Most likely"
-     "Outlook good" "Signs point to yes"
-     "Without a doubt" "Yes" "Yes - definitely"
-     "Reply hazy, try again" "Ask again later"
-     "Better not tell you now" "Cannot predict now"
-     "Concentrate and ask again" "Don't count on it"
-     "My reply is no" "My sources say no"
-     "Outlook not so good" "Very doubtful")
+  (svref #("As I see it, yes"
+           "It is certain"
+           "It is decidedly so"
+           "Most likely"
+           "Outlook good"
+           "Signs point to yes"
+           "Without a doubt"
+           "Yes" "Yes - definitely"
+           "Reply hazy, try again"
+           "Ask again later"
+           "Better not tell you now"
+           "Cannot predict now"
+           "Concentrate and ask again"
+           "Don't count on it"
+           "My reply is no"
+           "My sources say no"
+           "Outlook not so good"
+           "Very doubtful")
    ;; Shake the Magic 8-Ball
-   (loop
-    with counter = -1
-    with vec = (map-into (make-array 20)
-                         (lambda () (incf counter)))
-    for index below 20
-    and swap = (random 20) do
-    (rotatef (svref vec index) (svref vec swap))
-    finally (return (svref vec (random 20))))))
-
+   (loop with counter = -1
+         with vec = (map-into (make-array 20)
+                              (lambda () (incf counter)))
+         for index below 20
+         and swap = (random 20) do
+         (rotatef (svref vec index) (svref vec swap))
+         finally (return (svref vec (random 20))))))
