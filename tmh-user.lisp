@@ -2,7 +2,7 @@
 
  TMH-USER
 
- Copyright (c) 2009,2010, Thomas M. Hermann
+ Copyright (c) 2009-2011, Thomas M. Hermann
  All rights reserved.
 
  Redistribution and  use  in  source  and  binary  forms, with or without
@@ -35,15 +35,23 @@
 
 ;;; Some utilities to mold the REPL to my liking.
 
-(defpackage "TMH-USER"
-  (:use "COMMON-LISP" "COMMON-LISP-USER"
-        #+sbcl "SB-EXT"
-        #+ccl  "CCL"
-        #+lispworks "LISPWORKS"
-        #+lispworks "HCL")
-  (:export "FUNBIND" "SUNBIND" "MAGIC-8-BALL"))
+(in-package :common-lisp-user)
 
-(in-package "TMH-USER")
+(defpackage :tmh-user
+  (:use :common-lisp :common-lisp-user
+        #+sbcl :sb-ext
+        #+ccl  :ccl
+        #+lispworks :lispworks
+        #+lispworks :hcl)
+  (:export :funbind :sunbind
+           :user-directory
+           :magic-8-ball
+           ;; Units conversion
+           :radians :degrees
+           :inches :meters
+           :psi :pascals))
+
+(in-package :tmh-user)
 
 (defun funbind (name)
   "Remove the function or macro definition, providing a continuable
@@ -69,6 +77,19 @@ bound."
   "Abbreviation for FIND-ALL-SYMBOLS."
   (find-all-symbols (string name)))
 
+;;; Pathname
+(defun user-directory (&rest path-elements)
+  "Return a directory relative to USER-HOMEDIR-PATHNAME."
+  (let ((directory (merge-pathnames
+                    (make-pathname
+                     :directory (list* :relative path-elements))
+                    (user-homedir-pathname))))
+    (assert (probe-file directory)
+        (directory)
+      "~A is not a directory." directory)
+    directory))
+
+;;; Magic 8-Ball
 (defun magic-8-ball (query)
   "Seek the advice of the Magic 8-ball."
   (declare (ignore query))
@@ -98,3 +119,28 @@ bound."
          and swap = (random 20) do
          (rotatef (svref vec index) (svref vec swap))
          finally (return (svref vec (random 20))))))
+
+;;; Units conversion : FIXME : Need a units library
+(defun radians (angle-in-degrees)
+  "Return the angle in radians."
+  (* angle-in-degrees (/ pi 180D0)))
+
+(defun degrees (angle-in-radians)
+  "Return the angle in degrees."
+  (* angle-in-radians (/ 180D0 pi)))
+
+(defun inches (length-in-meters)
+  "Return the length in inches."
+  (/ length-in-meters 2.54D-2))
+
+(defun meters (length-in-inches)
+  "Return the length in meters."
+  (* 2.54D-2 length-in-inches))
+
+(defun pascals (pressure-in-psi)
+  "Return the pressure in Pascals."
+  (/ pressure-in-psi 1.45D-4))
+
+(defun psi (pressure-in-pascals)
+  "Return the pressure in PSI."
+  (* 1.45D-4 pressure-in-pascals))
