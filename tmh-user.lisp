@@ -44,6 +44,7 @@
         #+lispworks :lispworks
         #+lispworks :hcl)
   (:export :funbind :sunbind
+           :probe-pathname
            :user-directory
            :magic-8-ball
            ;; Units conversion
@@ -78,6 +79,15 @@ bound."
   (find-all-symbols (string name)))
 
 ;;; Pathname
+
+(defun probe-pathname (&rest all-keys &key
+                       host device directory name type
+                       version defaults case)
+  "Make and probe the pathname."
+  (declare (ignore host device directory name type))
+  (declare (ignore version defaults case))
+  (probe-file (apply #'make-pathname all-keys)))
+
 (defun user-directory (&rest path-elements)
   "Return a directory relative to USER-HOMEDIR-PATHNAME."
   (let ((directory (merge-pathnames
