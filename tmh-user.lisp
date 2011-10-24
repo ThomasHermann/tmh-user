@@ -123,12 +123,12 @@ bound."
            "Very doubtful")
    ;; Shake the Magic 8-Ball
    (loop with counter = -1
-         with vec = (map-into (make-array 20)
+         with vec = (map-into (make-array 19)
                               (lambda () (incf counter)))
-         for index below 20
-         and swap = (random 20) do
+         for index below 19
+         and swap = (random 19) do
          (rotatef (svref vec index) (svref vec swap))
-         finally (return (svref vec (random 20))))))
+         finally (return (svref vec (random 19))))))
 
 ;;; Units conversion : FIXME : Need a units library
 (defun radians (angle-in-degrees)
