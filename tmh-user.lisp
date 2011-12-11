@@ -44,6 +44,7 @@
         #+lispworks :lispworks
         #+lispworks :hcl)
   (:export :funbind :sunbind
+           :list-external-symbols
            :probe-pathname
            :user-directory
            :magic-8-ball
@@ -53,6 +54,8 @@
            :psi :pascals))
 
 (in-package :tmh-user)
+
+;;; Symbol utilities
 
 (defun funbind (name)
   "Remove the function or macro definition, providing a continuable
@@ -74,9 +77,10 @@ bound."
   (unless (fboundp name)
     (unintern name)))
 
-(defun fas (name)
-  "Abbreviation for FIND-ALL-SYMBOLS."
-  (find-all-symbols (string name)))
+(defun list-external-symbols (&optional (package *package*))
+  "Return a list of the external symbols in the package."
+  (loop for extsym being each external-symbol in package
+        collect extsym))
 
 ;;; Pathname
 
