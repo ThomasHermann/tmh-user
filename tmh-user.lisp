@@ -43,15 +43,18 @@
         #+ccl  :ccl
         #+lispworks :lispworks
         #+lispworks :hcl)
+  ;; Symbols
   (:export :funbind :sunbind
-           :list-external-symbols
-           :probe-pathname
-           :user-directory
-           :magic-8-ball
-           ;; Units conversion
-           :radians :degrees
+           :list-external-symbols)
+  ;; Pathnames
+  (:export :probe-pathname
+           :user-directory)
+  ;; Magic 8 ball
+  (:export :magic-8-ball)
+  ;; Units conversion
+  (:export :radians :degrees
            :inches :meters
-           :psi :pascals))
+           :psi :pascals)))
 
 (in-package :tmh-user)
 
@@ -104,6 +107,7 @@ bound."
     directory))
 
 ;;; Magic 8-Ball
+
 (defun magic-8-ball (query)
   "Seek the advice of the Magic 8-ball."
   (declare (ignore query))
@@ -125,36 +129,30 @@ bound."
            "My sources say no"
            "Outlook not so good"
            "Very doubtful")
-   ;; Shake the Magic 8-Ball
-   (loop with counter = -1
-         with vec = (map-into (make-array 19)
-                              (lambda () (incf counter)))
-         for index below 19
-         and swap = (random 19) do
-         (rotatef (svref vec index) (svref vec swap))
-         finally (return (svref vec (random 19))))))
+          (random 19)))
 
 ;;; Units conversion : FIXME : Need a units library
-(defun radians (angle-in-degrees)
+
+(defun radians (degrees)
   "Return the angle in radians."
-  (* angle-in-degrees (/ pi 180D0)))
+  (* degrees (/ pi 180D0)))
 
-(defun degrees (angle-in-radians)
+(defun degrees (radians)
   "Return the angle in degrees."
-  (* angle-in-radians (/ 180D0 pi)))
+  (* radians (/ 180D0 pi)))
 
-(defun inches (length-in-meters)
+(defun inches (meters)
   "Return the length in inches."
-  (/ length-in-meters 2.54D-2))
+  (/ meters 2.54D-2))
 
-(defun meters (length-in-inches)
+(defun meters (inches)
   "Return the length in meters."
-  (* 2.54D-2 length-in-inches))
+  (* 2.54D-2 inches))
 
-(defun pascals (pressure-in-psi)
+(defun pascals (psi)
   "Return the pressure in Pascals."
-  (/ pressure-in-psi 1.45D-4))
+  (/ psi 1.45D-4))
 
-(defun psi (pressure-in-pascals)
+(defun psi (pascals)
   "Return the pressure in PSI."
-  (* 1.45D-4 pressure-in-pascals))
+  (* 1.45D-4 pascals))
