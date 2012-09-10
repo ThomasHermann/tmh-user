@@ -2,7 +2,7 @@
 
  TMH-USER
 
- Copyright (c) 2009-2011, Thomas M. Hermann
+ Copyright (c) 2009-2012, Thomas M. Hermann
  All rights reserved.
 
  Redistribution and  use  in  source  and  binary  forms, with or without
@@ -33,22 +33,29 @@
 
 |#
 
-;;; Some utilities to mold the REPL to my liking.
+;;; Some pointless utilities to mold the REPL to my liking.
 
 (in-package :common-lisp-user)
 
 (defpackage :tmh-user
-  (:use :common-lisp :common-lisp-user
-        #+sbcl :sb-ext
-        #+ccl  :ccl
-        #+lispworks :lispworks
-        #+lispworks :hcl)
+  (:use :common-lisp :common-lisp-user)
+  #+sbcl
+  (:use :sb-ext)
+  #+ccl
+  (:use :ccl)
+  #+lispworks
+  (:use :lispworks :hcl)
   ;; Symbols
   (:export :funbind :sunbind
            :list-external-symbols)
   ;; Pathnames
   (:export :probe-pathname
-           :user-directory)
+           :user-directory
+           :map-file-to-string)
+  ;; List functions
+  (:export :cartesian-product
+           :nary-product
+           :permutations)
   ;; Magic 8 ball
   (:export :magic-8-ball)
   ;; Units conversion
@@ -85,7 +92,7 @@ bound."
   (loop for extsym being each external-symbol in package
         collect extsym))
 
-;;; Pathname
+;;; Pathname & files
 
 (defun probe-pathname (&rest all-keys &key
                        host device directory name type
@@ -105,6 +112,35 @@ bound."
         (directory)
       "~A is not a directory." directory)
     directory))
+
+(defun naggum-map-file-to-string (pathname)
+  "Create a string that contains all the characters of a file.
+
+Erik Naggum : 1998-04-15"
+  ;;this should have used a memory mapping function
+  (with-open-file (file pathname :direction :input)
+    (let ((string (make-array (file-length file)
+                              :element-type (stream-element-type file)
+                              #+allegro :allocation #+allegro :old)))
+      (if (= (length string) (read-sequence string file))
+          string
+          (error 'file-error
+                 :pathname pathname
+                 :format-control "~@<~S could not be mapped to a string.~:@>"
+                 :format-arguments (list pathname))))))
+
+(defun map-file-to-string (pathname &optional (buffer-size 8192))
+  "Create a string that contains all the characters of a file."
+  (with-open-file (file pathname :direction :input)
+    (let ((size (file-length file)))
+      (if (< size array-total-size-limit)
+          (with-output-to-string (out)
+            (loop with buffer = (make-string buffer-size)
+                  for pos = (read-sequence buffer file)
+                  as read-count = pos then (+ read-count pos)
+                  do (write-string buffer out :end pos)
+                  until (or (< size read-count) (zerop pos))))
+          (error "The file size exceeds ARRAY-TOTAL-SIZE-LIMIT.")))))
 
 ;;; Magic 8-Ball
 
@@ -130,6 +166,33 @@ bound."
            "Outlook not so good"
            "Very doubtful")
           (random 19)))
+
+;;; List functions
+
+(defun cartesian-product (list1 list2)
+  "Return a list of the Cartesian product of two lists."
+  (mapcan (lambda (x) (mapcar (lambda (y) (list x y)) list2)) list1))
+
+(defun nary-product (list1 list2 &rest more-lists)
+  "Return a list of the n-ary Cartesian product of the lists."
+  (if (null more-lists)
+      (cartesian-product list1 list2)
+      (mapcan
+       (lambda (x)
+         (mapcar (lambda (y) (push x y))
+                 (apply #'nary-product list2
+                        (car more-lists) (rest more-lists))))
+       list1)))
+
+(defun permutations (list)
+  "Return permutations of the list. [Erik Naggum]"
+  (if (cdr list)
+      (loop with rotation = list
+            do (setq rotation (nconc (last rotation) (nbutlast rotation)))
+            nconc (loop for list in (permutations (rest rotation))
+                        collect (cons (first rotation) (copy-list list)))
+            until (eq rotation list))
+      (list list)))
 
 ;;; Units conversion : FIXME : Need a units library
 
