@@ -61,7 +61,7 @@
   ;; Units conversion
   (:export :radians :degrees
            :inches :meters
-           :psi :pascals)))
+           :psi :pascals))
 
 (in-package :tmh-user)
 
