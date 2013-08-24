@@ -47,6 +47,7 @@
 
 ;;; ASDF Integration
 
+#+asdf
 (let ((*compile-verbose* nil)
       (*compile-print*   nil)
       (asdf-integration
