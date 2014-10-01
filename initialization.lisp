@@ -6,7 +6,7 @@
 (load
  (merge-pathnames
   (make-pathname
-   :directory '(:relative "Lisp" "tmh-user")
+   :directory '(:relative "lisp" "tmh-user")
    :name "tmh-user"
    :type "lisp")
   (user-homedir-pathname)))
