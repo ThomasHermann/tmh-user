@@ -14,7 +14,7 @@
 (defvar *lw-custom-directory*
   (merge-pathnames
    (make-pathname
-    :directory '(:relative "Lisp" "LispWorks"))
+    :directory '(:relative "common-lisp" "LispWorks"))
    (user-homedir-pathname))
   "Location of personal customizations to LispWorks.")
 
@@ -27,7 +27,7 @@
 (load
  (merge-pathnames
   (make-pathname
-   :directory '(:relative "Lisp" "tmh-user")
+   :directory '(:relative "common-lisp" "tmh-user")
    :name "tmh-user")
   (user-homedir-pathname)))
 
@@ -37,7 +37,7 @@
 (let ((quicklisp-init
        (merge-pathnames
         (make-pathname
-         :directory '(:relative "Quicklisp")
+         :directory '(:relative "quicklisp")
          :name "setup"
          :type "lisp")
         (user-homedir-pathname))))
