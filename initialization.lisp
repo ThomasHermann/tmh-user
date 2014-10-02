@@ -6,7 +6,7 @@
 (load
  (merge-pathnames
   (make-pathname
-   :directory '(:relative "lisp" "tmh-user")
+   :directory '(:relative "common-lisp" "tmh-user")
    :name "tmh-user"
    :type "lisp")
   (user-homedir-pathname)))
@@ -17,7 +17,7 @@
 (let ((quicklisp-init
        (merge-pathnames
         (make-pathname
-         :directory '(:relative "Quicklisp")
+         :directory '(:relative "quicklisp")
          :name "setup"
          :type "lisp")
         (user-homedir-pathname))))
