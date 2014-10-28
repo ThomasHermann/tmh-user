@@ -48,11 +48,7 @@
            :nary-product
            :permutations)
   ;; Magic 8 ball
-  (:export :magic-8-ball)
-  ;; Units conversion
-  (:export :radians :degrees
-           :inches :meters
-           :psi :pascals))
+  (:export :magic-8-ball))
 
 (in-package :tmh-user)
 
@@ -178,35 +174,12 @@ Erik Naggum : 1998-04-15"
 (defun permutations (list)
   "Return permutations of the list. [Erik Naggum]"
   (if (cdr list)
-      (loop with rotation = list
-            do (setq rotation (nconc (last rotation) (nbutlast rotation)))
-            nconc (loop for list in (permutations (rest rotation))
-                        collect (cons (first rotation) (copy-list list)))
-            until (eq rotation list))
+      (loop
+       with rotation = list
+       do (setq rotation (nconc (last rotation) (nbutlast rotation)))
+       nconc
+       (loop
+        for list in (permutations (rest rotation))
+        collect (cons (first rotation) (copy-list list)))
+       until (eq rotation list))
       (list list)))
-
-;;; Units conversion : FIXME : Need a units library
-
-(defun radians (degrees)
-  "Return the angle in radians."
-  (* degrees (/ pi 180D0)))
-
-(defun degrees (radians)
-  "Return the angle in degrees."
-  (* radians (/ 180D0 pi)))
-
-(defun inches (meters)
-  "Return the length in inches."
-  (/ meters 2.54D-2))
-
-(defun meters (inches)
-  "Return the length in meters."
-  (* 2.54D-2 inches))
-
-(defun pascals (psi)
-  "Return the pressure in Pascals."
-  (/ psi 1.45D-4))
-
-(defun psi (pascals)
-  "Return the pressure in PSI."
-  (* 1.45D-4 pascals))
