@@ -6,9 +6,6 @@
 (rename-package "COMMON-LISP-USER" "COMMON-LISP-USER" '("CL-USER"))
 (rename-package "COMMON-LISP" "COMMON-LISP" '("CL"))
 
-;; Rely on outside versions of ASDF and integration
-(setf lispworks:*autoload-asdf-integration* nil)
-
 ;;; LispWorks personal customizations
 
 (defvar *lw-custom-directory*
@@ -42,22 +39,7 @@
          :type "lisp")
         (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
-    (load quicklisp-init)
-    (provide "asdf")))
-
-;;; ASDF Integration
-
-#+asdf
-(let ((*compile-verbose* nil)
-      (*compile-print*   nil)
-      (asdf-integration
-       (merge-pathnames
-        (make-pathname :name "asdf-integration")
-        *lw-custom-directory*)))
-  ;; ASDF integration with LispWorks
-  (handler-case (compile-file-if-needed asdf-integration :load t)
-    (conditions:fasl-error ()
-      (load (compile-file asdf-integration)))))
+    (load quicklisp-init)))
 
 ;;; Commonly used libraries
 
