@@ -183,3 +183,13 @@ Erik Naggum : 1998-04-15"
         collect (cons (first rotation) (copy-list list)))
        until (eq rotation list))
       (list list)))
+
+(defun factorial (n)
+  (if (minusp n)
+      (error "Argument must be positive.")
+      (if (zerop n) 1 (* n (factorial (1- n))))))
+
+(defun combinations (nelm kcomb)
+  (/ (factorial nelm)
+     (factorial kcomb)
+     (factorial (- nelm kcomb))))
